@@ -77,7 +77,7 @@ window.HT_CONFIG = {
       number: "01",
       name: "Natural hair care",
       image: "assets/img/svc-natural.jpg",
-      alt: "Editorial portrait of natural curls with rich, defined texture",
+      alt: "Smiling client with full natural hair in a salon chair beneath a ring light",
       blurb: "Trims, treatments and styling for every texture — care plans guided by patience, healthy practice and detail.",
       price: null,
       bookingUrl: "https://hairtherapynashville.as.me/schedule/109b419c"

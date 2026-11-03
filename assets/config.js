@@ -23,8 +23,8 @@ window.HT_CONFIG = {
     // V — public listing
     addressLine1: "118 Bridgeway Ave",
     addressLine2: "Old Hickory, TN 37138",
-    mapsUrl: "https://maps.app.goo.gl/9BcL3crT8r38do7J6",
-    directionsUrl: "https://www.google.com/maps/dir/?api=1&destination=Hair+Therapy+Nashville+Salon+and+Beauty+Spa+118+Bridgeway+Ave%2C+Old+Hickory%2C+TN+37138",
+    mapsUrl: "https://maps.app.goo.gl/bRNfamcZnhgJqWh78",
+    directionsUrl: "https://maps.app.goo.gl/bRNfamcZnhgJqWh78",
 
     // V — public listing
     phoneDisplay: "+1 615-933-9641",

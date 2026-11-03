@@ -24,6 +24,10 @@
   --hairline-light: rgba(243, 234, 227, .18);
   --glass:        rgba(40, 25, 23, .90);
 
+  /* Layout — resting sticky-header height; script.js (syncHeadVar)
+     replaces this estimate with the real measurement at runtime. */
+  --head-h: clamp(64px, 7.2vw, 104px);
+
   /* Type */
   --serif: "Cormorant Garamond", "Georgia", serif;
   --sans:  "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -378,18 +382,38 @@ section { position: relative; }
 
 .menu-toggle { display: none; }
 
-/* ------------------------------- Hero ------------------------------------ */
+/* Small-laptop band: tighten the header so wordmark + 5 links + booking pill
+   stay on one line without wrapping (nav sits fully in ~618px at 901px). */
+@media (min-width: 900px) and (max-width: 1120px) {
+  .site-head { gap: 16px; }
+  .site-nav { gap: 14px; }
+  .nav-link { letter-spacing: .13em; }
+  .nav-book {
+    padding: 10px 16px;
+    gap: 6px;
+    font-size: 0.6563rem;
+    letter-spacing: .1em;
+    white-space: nowrap;
+  }
+}
 
 /* ------------------------------- Hero ------------------------------------ */
+
+/* Full-bleed cinematic hero: the image runs edge-to-edge and all viewport
+   heights; copy sits over a left scrim (Élan / Maison-Élise direction).
+   --head-h is refined by script.js to the real sticky-header height so the
+   hero slides pixel-perfectly underneath it. */
 
 .hero {
-  --head-h: clamp(64px, 7vw, 78px);
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  grid-template-columns: 1fr;
+  align-content: center;
+  align-items: center;
+  min-height: min(calc(100vh - var(--head-h)), 1040px);   /* fallback */
+  min-height: min(calc(100svh - var(--head-h)), 1040px);   /* exact on mobile URL bars */
   margin-top: calc(-1 * var(--head-h));
-  min-height: calc(100svh - 140px);
-  max-height: 980px;
-  background: var(--espresso-deep);
+  background: var(--espresso-darker);
   color: var(--ivory);
   overflow: hidden;
 }
@@ -400,27 +424,15 @@ section { position: relative; }
   z-index: 3;
   pointer-events: none;
   background:
-    radial-gradient(58vw 46vh at 74% 18%, rgba(198, 169, 135, .14), transparent 62%),
-    linear-gradient(100deg, rgba(32, 19, 17, .92) 6%, rgba(32, 19, 17, .28) 46%, rgba(32, 19, 17, 0) 72%);
-}
-/* content column text needs a slightly stronger left wash */
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background: linear-gradient(to right, rgba(40, 25, 23, .55), transparent 42%);
-  opacity: .8;
-  mix-blend-mode: multiply;
+    radial-gradient(52vw 60vh at 86% 4%, rgba(198, 169, 135, .13), transparent 60%),
+    linear-gradient(to right, rgba(23, 13, 11, .95) 0%, rgba(23, 13, 11, .84) 26%, rgba(23, 13, 11, .50) 52%, rgba(23, 13, 11, .14) 78%, rgba(23, 13, 11, 0) 94%),
+    linear-gradient(to top, rgba(23, 13, 11, .62), rgba(23, 13, 11, 0) 32%);
 }
 
 .hero-media {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
-  grid-column: 2;
-  height: 100%;
-  min-height: 620px;
   overflow: hidden;
 }
 html.js .hero-media img {
@@ -430,11 +442,12 @@ html.js .hero-media img {
 body.is-loaded .hero-media img { clip-path: inset(0 0 0 0); }
 .hero-media img {
   position: absolute;
-  inset: 0;
+  top: -6%;
+  left: 0;
   width: 100%;
   height: 112%;
   object-fit: cover;
-  object-position: 62% 20%;
+  object-position: 62% 24%;
   will-change: transform;
 }
 .hero-media-caption {
@@ -452,14 +465,29 @@ body.is-loaded .hero-media img { clip-path: inset(0 0 0 0); }
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
+@media (min-width: 900px) {
+  .hero-media-caption { left: auto; right: clamp(20px, 2.6vw, 40px); }
+}
 
 .hero-content {
   position: relative;
   z-index: 5;
-  grid-column: 1;
-  align-self: center;
-  padding: clamp(88px, 12vh, 130px) clamp(28px, 4vw, 72px) clamp(120px, 14vh, 180px);
-  padding-left: clamp(20px, 4vw, 56px);
+  grid-row: 1;
+  width: min(100%, 640px);
+  justify-self: start;
+  margin-left: calc((100% - min(1240px, 100vw - clamp(36px, 7vw, 112px))) / 2);
+  padding: 0 28px clamp(120px, 16vh, 190px) 0;
+}
+/* Desktop: reserve the sticky-header band inside the hero's grid track so the
+   copy centers in the *visible* area and can never ride under the transparent
+   wordmark/nav. The photo stays full-bleed behind the header — absolutely
+   positioned media ignores the padding. (Threshold is 900, not 901, so
+   fractional-DPR viewports ~900.8px can't fall into a media-query gap.) */
+@media (min-width: 900px) {
+  .hero { padding-top: calc(var(--head-h) + clamp(16px, 3vh, 40px)); }
+}
+.hero-title {
+  text-shadow: 0 2px 46px rgba(23, 13, 11, .5), 0 1px 16px rgba(23, 13, 11, .35);
 }
 .hero-title {
   margin: 0 0 clamp(22px, 2.8vw, 34px);
@@ -1539,19 +1567,30 @@ html.js [data-reveal].in-view { opacity: 1; transform: none; }
   .nav-book { margin-top: 16px; padding: 16px 30px; }
 
   .hero {
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(340px, 46vh) auto;
-    max-height: none;
-    min-height: calc(100svh - 140px);
-    height: auto;
+    display: block;
+    min-height: 0;
+    padding-top: 0;
   }
-  .hero-media { grid-column: 1; grid-row: 1; min-height: 340px; }
-  .hero-media img { object-position: 58% 18%; }
-  .hero-content { grid-column: 1; grid-row: 2; align-self: start; padding-top: 26px; }
+  .hero-media {
+    position: relative;
+    inset: auto;
+    min-height: 340px;
+    height: min(74vh, 540px);
+  }
+  .hero-media img { top: -8%; height: 116%; object-position: 58% 12%; }
+  .hero::before {
+    background:
+      linear-gradient(to bottom, rgba(23, 13, 11, .44), rgba(23, 13, 11, 0) 28%, rgba(23, 13, 11, .58) 76%, rgba(23, 13, 11, .72) 100%);
+  }
+  .hero-content {
+    width: auto;
+    margin-left: 0;
+    padding: 30px clamp(20px, 4vw, 40px) 46px;
+  }
   .hero-title .h-line { white-space: normal; }
   .hero-title .h-line:last-child { margin-left: 0; }
   .h-mask { display: inline; }
-  .hero::after { background: linear-gradient(to bottom, rgba(40, 25, 23, .2), rgba(40, 25, 23, .66) 58%); }
+  .hero-scroll { display: none; }
 
   .section-head { grid-template-columns: 1fr; align-items: start; }
   .philosophy-grid { grid-template-columns: 1fr; gap: 54px; }

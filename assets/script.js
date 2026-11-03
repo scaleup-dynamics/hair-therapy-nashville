@@ -242,6 +242,16 @@
     head.classList.toggle("is-stuck", window.scrollY > 48);
   }
 
+  /* Keep the hero pull-under exact: measure the resting (non-stuck) header
+     height and expose it as --head-h for the hero's negative margin. */
+  function syncHeadVar() {
+    if (!head || head.classList.contains("is-stuck")) return;
+    document.documentElement.style.setProperty("--head-h", head.offsetHeight + "px");
+  }
+  syncHeadVar();
+  window.addEventListener("resize", syncHeadVar);
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(syncHeadVar); }
+
   var spySections = ["philosophy", "services", "gallery", "stylist", "visit"]
     .map(function (id) { return document.getElementById(id); });
 
